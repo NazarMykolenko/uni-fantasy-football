@@ -1,0 +1,24 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon server.js",
+    "setup:db": "cd ./db && ./setup.sh && cd -"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@fastify/cors": "^8.4.0",
+    "@fastify/multipart": "^8.0.0",
+    "@fastify/postgres": "^5.2.2",
+    "fastify": "^4.24.3",
+    "nodemon": "^3.0.1",
+    "pg": "^8.11.3",
+    "pino-pretty": "^10.2.3",
+    "xlsx": "^0.18.5"
+  }
+}
