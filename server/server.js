@@ -44,7 +44,7 @@ async function job() {
   const playerPositions = await dbGetPlayerPositions(client);
 
   if (!officialTeams.length) {
-    for (team of data.team) {
+    for (team of data.teams) {
       const result = await insertOfficialTeam(client, team);
       console.log(JSON.stringify(result));
     }
@@ -52,14 +52,13 @@ async function job() {
 
   if (!playerPositions.length) {
     for (playerPosition of data.element_types) {
-      const result = await insertPlayerPosition(client, team);
+      const result = await insertPlayerPosition(client, playerPosition);
       console.log(JSON.stringify(result));
     }
   }
 
   for (const player of data.elements) {
     const result = await upsertPlayerInfo(client, player);
-    console.log(JSON.stringify(result));
   }
 }
 
