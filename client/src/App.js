@@ -16,7 +16,7 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import { Home, Menu, Money, Receipt, SportsSoccer } from "@mui/icons-material";
 import { IconButton } from "@mui/material";
-
+import FootballField from "./components/PlayerSelection";
 function App() {
   const [state, setState] = useState({
     left: false,
@@ -36,7 +36,7 @@ function App() {
     const location = useLocation();
     const menuItems = [
       { name: "Lorem ipsum", path: "/", icon: <Home /> },
-      { name: "Lorem ipsum", path: "/page1", icon: <SportsSoccer /> },
+      { name: "Lorem ipsum", path: "/draft", icon: <SportsSoccer /> },
       { name: "Lorem ipsum", path: "/page2", icon: <Money /> },
       { name: "Lorem ipsum", path: "/page3", icon: <Receipt /> },
     ];
@@ -98,7 +98,14 @@ function App() {
         </Drawer>
 
         <Routes>
-          <Route path="/" element={<div>Page ⚽️</div>} />
+          <Route
+            path="/draft"
+            element={
+              <div>
+                <FootballField>Hello </FootballField>
+              </div>
+            }
+          />
           <Route path="/page1" element={<div>Page ⚽️</div>} />
           <Route path="/page2" element={<div>Page ⚽️</div>} />
           <Route path="/page3" element={<div>Page ⚽️</div>} />

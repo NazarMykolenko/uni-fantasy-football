@@ -64,19 +64,19 @@ async function job() {
 
 fastify.get("/players", async (_, reply) => {
   const client = await fastify.pg.connect();
-  const players = await dbGetAllPlayers(client);
+  const players = await dbGetPlayers(client);
   reply.send(players);
   client.release();
 });
 
-fastify.get("/official_teams", async (_, reply) => {
+fastify.get("/official-teams", async (_, reply) => {
   const client = await fastify.pg.connect();
   const official_teams = await dbGetOfficialTeams(client);
   reply.send(official_teams);
   client.release();
 });
 
-fastify.get("/player_positions", async (_, reply) => {
+fastify.get("/player-positions", async (_, reply) => {
   const client = await fastify.pg.connect();
   const player_positions = await dbGetPlayerPositions(client);
   reply.send(player_positions);
