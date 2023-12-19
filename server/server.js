@@ -1,4 +1,5 @@
 const {
+  dbGetPlayers,
   upsertPlayerInfo,
   insertOfficialTeam,
   insertPlayerPosition,
@@ -39,15 +40,18 @@ async function job() {
   const response = await fetch(URL_API_FANTASY_FOOTBALL);
   const data = await response.json();
 
-  if (!client.dbGetOfficialTeams()) {
+  const officialTeams = await dbGetOfficialTeams(client);
+  const playerPositions = await dbGetPlayerPositions(client);
+
+  if (!officialTeams.length) {
     for (team of data.team) {
       const result = await insertOfficialTeam(client, team);
       console.log(JSON.stringify(result));
     }
   }
 
-  if (!client.dbGetAllPlayers()) {
-    for (team of data.element_types) {
+  if (!playerPositions.length) {
+    for (playerPosition of data.element_types) {
       const result = await insertPlayerPosition(client, team);
       console.log(JSON.stringify(result));
     }

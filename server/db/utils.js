@@ -1,16 +1,16 @@
-async function dbGetAllPlayers() {
+async function dbGetPlayers(client) {
   const query = `SELECT * FROM "players"`;
   const result = await client.query(query);
   return result.rows;
 }
 
-async function dbGetOfficialTeams() {
+async function dbGetOfficialTeams(client) {
   const query = `SELECT * FROM "official_teams"`;
   const result = await client.query(query);
   return result.rows;
 }
 
-async function dbGetPlayerPositions() {
+async function dbGetPlayerPositions(client) {
   const query = `SELECT * FROM "player_positions"`;
   const result = await client.query(query);
   return result.rows;
