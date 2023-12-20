@@ -17,10 +17,7 @@ import ListItemText from "@mui/material/ListItemText";
 import { Home, Menu, Money, Receipt, SportsSoccer } from "@mui/icons-material";
 import { IconButton } from "@mui/material";
 import PlayerSelection from "./components/PlayerSelection";
-import FootballFieldComponent from "./components/FootballField";
 import "./App.css";
-import Dropdown from "./components/Dropdown";
-import ButtonDropdown from "./components/ButtonDropdown";
 
 function App() {
   const [state, setState] = useState({
@@ -108,10 +105,7 @@ function App() {
             <div>
               <div className="draft">
                 <div className="player-selection">
-                  <PlayerSelection></PlayerSelection>
-                </div>
-                <div className="football-field">
-                  <FootballFieldComponent />
+                  <PlayerSelection />
                 </div>
               </div>
             </div>

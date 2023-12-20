@@ -1,12 +1,15 @@
-.draft {
-  display: flex;
-  align-items: stretch;
-  flex-direction: row;
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap");
+
+body {
+  font-family: "Roboto", sans-serif;
+  background-image: url("https://wallpapercrafter.com/desktop/228687-night-view-of-crowded-volksparkstadion-soccer-stad.jpg");
+  background-size: cover; /* Adjust as needed */
+  background-position: center; /* Adjust as needed */
+  background-repeat: no-repeat;
+  height: 100vh; /* Set the height to cover the entire viewport */
+  margin: 0; /* Remove default margin */
 }
 
-.football-field {
-  flex-grow: 6;
-}
-.player-selection {
-  flex-grow: 4;
+* {
+  color: white;
 }
