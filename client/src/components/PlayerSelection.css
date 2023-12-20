@@ -2,8 +2,18 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  width: 100vw;
 }
 
 .field {
-  height: 30vh;
+  width: 50vw;
+}
+
+.content {
+  display: flex;
+}
+
+.team-list {
+  margin-right: 200px;
+  text-align: left;
 }

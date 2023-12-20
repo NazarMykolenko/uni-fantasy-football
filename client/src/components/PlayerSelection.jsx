@@ -40,18 +40,20 @@ function PlayerSelection() {
     <div className="container">
       <h1>Fantasy football ⚽️</h1>
       <h2>Choose your team 👇</h2>
-      <div>
-        Your team
-        {!!selectedPlayersWithNumber.length && (
-          <ul>
-            {selectedPlayersWithNumber.map(({ player, number }) => (
-              <li>
-                {player.name} - {getPositionName(player, playerPositions)} -{" "}
-                {number}
-              </li>
-            ))}
-          </ul>
-        )}
+      <div className="content">
+        <div className="team-list">
+          <h3>Your team 💪</h3>
+          {!!selectedPlayersWithNumber.length && (
+            <ul>
+              {selectedPlayersWithNumber.map(({ player, number }) => (
+                <li>
+                  {player.name} - {getPositionName(player, playerPositions)} -{" "}
+                  {number}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
         <div className="field">
           <FootballField
             players={players}

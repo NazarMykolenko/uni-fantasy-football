@@ -66,7 +66,12 @@ const FootballField = ({
 
   return (
     <div>
-      <SoccerLineUp color="#346334" pattern="lines" homeTeam={homeTeam} />
+      <SoccerLineUp
+        size="responsive"
+        color="#346334"
+        pattern="lines"
+        homeTeam={homeTeam}
+      />
       <DialogAddPlayerToTeam
         open={open}
         players={players}
