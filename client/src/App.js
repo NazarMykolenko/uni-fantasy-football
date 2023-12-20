@@ -16,7 +16,12 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import { Home, Menu, Money, Receipt, SportsSoccer } from "@mui/icons-material";
 import { IconButton } from "@mui/material";
-import FootballField from "./components/PlayerSelection";
+import PlayerSelection from "./components/PlayerSelection";
+import FootballFieldComponent from "./components/FootballField";
+import "./App.css";
+import Dropdown from "./components/Dropdown";
+import ButtonDropdown from "./components/ButtonDropdown";
+
 function App() {
   const [state, setState] = useState({
     left: false,
@@ -85,32 +90,37 @@ function App() {
 
   return (
     <BrowserRouter>
-      <div>
-        <IconButton color="secondary" onClick={toggleDrawer("left", true)}>
-          <Menu />
-        </IconButton>
-        <Drawer
-          anchor="left"
-          open={state["left"]}
-          onClose={toggleDrawer("left", false)}
-        >
-          <DrawerList anchor="left" />
-        </Drawer>
+      <IconButton color="secondary" onClick={toggleDrawer("left", true)}>
+        <Menu />
+      </IconButton>
+      <Drawer
+        anchor="left"
+        open={state["left"]}
+        onClose={toggleDrawer("left", false)}
+      >
+        <DrawerList anchor="left" />
+      </Drawer>
 
-        <Routes>
-          <Route
-            path="/draft"
-            element={
-              <div>
-                <FootballField>Hello </FootballField>
+      <Routes>
+        <Route
+          path="/draft"
+          element={
+            <div>
+              <div className="draft">
+                <div className="player-selection">
+                  <PlayerSelection></PlayerSelection>
+                </div>
+                <div className="football-field">
+                  <FootballFieldComponent />
+                </div>
               </div>
-            }
-          />
-          <Route path="/page1" element={<div>Page ⚽️</div>} />
-          <Route path="/page2" element={<div>Page ⚽️</div>} />
-          <Route path="/page3" element={<div>Page ⚽️</div>} />
-        </Routes>
-      </div>
+            </div>
+          }
+        />
+        <Route path="/page1" element={<div>Page ⚽️</div>} />
+        <Route path="/page2" element={<div>Page ⚽️</div>} />
+        <Route path="/page3" element={<div>Page ⚽️</div>} />
+      </Routes>
     </BrowserRouter>
   );
 }
