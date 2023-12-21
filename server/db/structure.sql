@@ -8,7 +8,6 @@ CREATE TABLE "user_teams" (
     user_team_id SERIAL PRIMARY KEY,
     user_id INT REFERENCES "users"(user_id),
     user_team_name VARCHAR(20) NOT NULL,
-    budget DECIMAL(10, 2) DEFAULT 100.00,
     total_coefficient DECIMAL(5, 2) DEFAULT 0.00
 );
 
