@@ -1,7 +1,7 @@
 CREATE TABLE "users" (
     user_id SERIAL PRIMARY KEY,
     username VARCHAR(20) UNIQUE NOT NULL,
-    password VARCHAR(20) NOT NULL
+    password VARCHAR(150) NOT NULL
 );
 
 CREATE TABLE "user_teams" (

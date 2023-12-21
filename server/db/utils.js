@@ -1,3 +1,10 @@
+async function dbGetUser(client, username) {
+  const query = `SELECT * FROM "users" WHERE username = $1`;
+  const values = [username];
+  const result = await client.query(query, values);
+  return result.rows;
+}
+
 async function dbGetPlayers(client) {
   const query = `SELECT * FROM "players"`;
   const result = await client.query(query);
@@ -13,6 +20,13 @@ async function dbGetOfficialTeams(client) {
 async function dbGetPlayerPositions(client) {
   const query = `SELECT * FROM "player_positions"`;
   const result = await client.query(query);
+  return result.rows;
+}
+
+async function addUser(client, username, password) {
+  const query = "INSERT INTO users (username, password) VALUES ($1, $2)";
+  const values = [username, password];
+  const result = await client.query(query, values);
   return result.rows;
 }
 
@@ -132,6 +146,8 @@ async function upsertPlayerInfo(client, player) {
 }
 
 module.exports = {
+  addUser,
+  dbGetUser,
   dbGetPlayers,
   dbGetOfficialTeams,
   dbGetPlayerPositions,
