@@ -21,8 +21,10 @@ export const DialogAddPlayerToTeam = ({
   number,
 }) => {
   const [selectedPlayer, setSelectedPlayer] = useState();
+
   const handleSubmit = useCallback(() => {
     onSubmit({ player: selectedPlayer, number });
+
     onClose();
   }, [number, onClose, onSubmit, selectedPlayer]);
 

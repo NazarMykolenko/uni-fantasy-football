@@ -31,7 +31,7 @@ const FootballField = ({
     return {
       squad: {
         gk: {
-          name: findPlayerNameByNumber(1),
+          name: findPlayerNameByNumber({ number: 1 }),
           color: "#04ff00",
           number: 1,
           onClick: () => onClick(1, 1),

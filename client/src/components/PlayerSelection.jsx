@@ -3,12 +3,16 @@ import { getPositionName, getPlayerPositions, getPlayers } from "../utils";
 import FootballField from "../components/FootballField";
 import "./PlayerSelection.css";
 
+const INITIAL_BUDGET = 100;
+
 function PlayerSelection() {
   const [players, setPlayers] = useState([]);
   const [playerPositions, setPlayerPositions] = useState([]);
   const [selectedPlayersWithNumber, setSelectedPlayersWithNumber] = useState(
     []
   );
+  console.log("selected", selectedPlayersWithNumber);
+  const [budget, setBudget] = useState(INITIAL_BUDGET);
 
   useEffect(() => {
     const fetchPlayers = async () => {
@@ -53,18 +57,22 @@ function PlayerSelection() {
               ))}
             </ul>
           )}
+          <h3>Your budget:</h3>
+          {budget}
         </div>
         <div className="field">
           <FootballField
             players={players}
             positions={playerPositions}
             selectedPlayersWithNumber={selectedPlayersWithNumber}
-            onSelectedPlayersWithNumberChange={(player) =>
+            onSelectedPlayersWithNumberChange={(playerWithNumber) => {
               setSelectedPlayersWithNumber([
                 ...selectedPlayersWithNumber,
-                player,
-              ])
-            }
+                playerWithNumber,
+              ]);
+              console.log("player", playerWithNumber);
+              setBudget(budget - playerWithNumber.player.price);
+            }}
           />
         </div>
       </div>
