@@ -24,8 +24,8 @@ function Copyright(props) {
       {...props}
     >
       {"Copyright © "}
-      <Link color="inherit" href="https://mui.com/">
-        Your Website
+      <Link color="inherit" href="#">
+        Fantasy Football Ukraine
       </Link>{" "}
       {new Date().getFullYear()}
       {"."}

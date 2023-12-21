@@ -14,7 +14,7 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import { Home, Menu, Money, Receipt, SportsSoccer } from "@mui/icons-material";
+import { Home, Menu, SportsSoccer } from "@mui/icons-material";
 import { IconButton } from "@mui/material";
 import PlayerSelection from "./components/PlayerSelection";
 import SignIn from "./components/SignIn";
@@ -39,10 +39,8 @@ function App() {
   const DrawerList = ({ anchor }) => {
     const location = useLocation();
     const menuItems = [
-      { name: "Lorem ipsum", path: "/", icon: <Home /> },
-      { name: "Lorem ipsum", path: "/draft", icon: <SportsSoccer /> },
-      { name: "Lorem ipsum", path: "/page2", icon: <Money /> },
-      { name: "Lorem ipsum", path: "/page3", icon: <Receipt /> },
+      { name: "Home", path: "/sign-up", icon: <Home /> },
+      { name: "Draft", path: "/draft", icon: <SportsSoccer /> },
     ];
 
     return (

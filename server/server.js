@@ -1,3 +1,4 @@
+const { log } = require("console");
 const {
   addUser,
   dbGetUser,
@@ -19,7 +20,7 @@ const crypto = require("crypto");
 
 const PORT = 8000;
 const authenticate = { realm: "example" };
-const REFRESH_MS = 1000 * 60 * 60;
+const REFRESH_MS = 10000 * 60 * 60;
 const URL_API_FANTASY_FOOTBALL =
   "https://fantasy.premierleague.com/api/bootstrap-static/";
 
@@ -73,25 +74,27 @@ async function job() {
   }
 }
 
-async function validate(username, password, req, reply) {
+async function validate(email, password, req, reply) {
   const client = await fastify.pg.connect();
 
   try {
-    const result = await dbGetUser(client, username);
+    const result = await dbGetUser(client, email);
 
     if (result.length === 0) {
       throw new Error("User not found");
     }
 
-    const [salt, hashedPassword] = result[0].password.split("$");
-    const hashedInputPassword = hashPassword(password, salt);
-    const isPasswordValid = hashedInputPassword === hashedPassword;
+    const [salt, hashedPassword] = result[0].password.split(`$`);
+    const [_, hashedInputPassword] = hashPassword(password, salt).split(`$`);
 
-    if (!isPasswordValid) {
+    if (hashedPassword != hashedInputPassword) {
       throw new Error("Invalid password");
     }
+
+    reply.send(result);
   } catch (error) {
     console.error("Authentication error:", error.message);
+    reply.code(401).send({ message: "Authentication error" });
   } finally {
     client.release();
   }
@@ -106,13 +109,16 @@ function hashPassword(password, salt) {
   return `${salt}$${hash}`;
 }
 
-// fastify.after(() => {
-//   fastify.addHook("onRequest", fastify.basicAuth);
-
-//   fastify.get("/login", (req, reply) => {
-//     reply.send({ hello: "world" });
-//   });
-// });
+fastify.after(() => {
+  fastify.route({
+    method: "GET",
+    url: "/login",
+    onRequest: fastify.basicAuth,
+    handler: async (req, reply) => {
+      return;
+    },
+  });
+});
 
 fastify.get("/players", async (_, reply) => {
   const client = await fastify.pg.connect();
@@ -139,30 +145,31 @@ fastify.post("/register", async (request, reply) => {
   const client = await fastify.pg.connect();
 
   try {
-    const { username, password1, password2 } = request.body;
+    const { username, email, password } = request.body;
 
-    if (!username || !password1 || !password2) {
+    if (!username || !email || !password) {
       reply.code(400).send({ error: "Missing required fields" });
       return;
     }
 
-    if (password1.length < 6) {
+    if (password.length < 6) {
       reply.send({ message: "Password must be a least 6 characters long" });
     }
 
-    if (password1 !== password2) {
-      reply.send({ message: "Passwords do not match" });
-    }
-
-    const existingUser = await dbGetUser(client, username);
+    const existingUser = await dbGetUser(client, email);
 
     if (existingUser.length > 0) {
       reply.code(400).send({ error: "Username is already in use" });
     }
 
     const salt = generateSalt();
-    const hashedPassword = hashPassword(password1, salt);
-    const resultOfAdding = await addUser(client, username, hashedPassword);
+    const hashedPassword = hashPassword(password, salt);
+    const resultOfAdding = await addUser(
+      client,
+      username,
+      email,
+      hashedPassword
+    );
 
     reply.code(201).send({ message: "User registered successfully" });
   } catch (error) {

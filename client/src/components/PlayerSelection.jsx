@@ -44,21 +44,15 @@ function PlayerSelection() {
 
   const handleSubmission = async () => {
     try {
-      // Add logic to format the team data as needed
       const teamData = {
-        // ...format your team data here based on your backend requirements
-        selectedPlayers: selectedPlayersWithNumber,
-        budget: budget,
+        selectedPlayers: selectedPlayersWithNumber
       };
 
-      // Call your addTeam function to submit the team to the database
       const response = await addTeam(teamData);
 
-      // Handle the response as needed (e.g., show a success message)
       console.log("Team submitted successfully:", response);
     } catch (error) {
       console.error("Error submitting team:", error);
-      // Handle the error (e.g., show an error message)
     }
   };
 

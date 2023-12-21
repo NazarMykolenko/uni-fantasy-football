@@ -1,6 +1,6 @@
-async function dbGetUser(client, username) {
-  const query = `SELECT * FROM "users" WHERE username = $1`;
-  const values = [username];
+async function dbGetUser(client, email) {
+  const query = `SELECT * FROM "users" WHERE email = $1`;
+  const values = [email];
   const result = await client.query(query, values);
   return result.rows;
 }
@@ -23,9 +23,10 @@ async function dbGetPlayerPositions(client) {
   return result.rows;
 }
 
-async function addUser(client, username, password) {
-  const query = "INSERT INTO users (username, password) VALUES ($1, $2)";
-  const values = [username, password];
+async function addUser(client, username, email, password) {
+  const query =
+    "INSERT INTO users (username, email, password) VALUES ($1, $2, $3)";
+  const values = [username, email, password];
   const result = await client.query(query, values);
   return result.rows;
 }
