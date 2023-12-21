@@ -30,7 +30,7 @@ export const DialogAddPlayerToTeam = ({
 
   return (
     <Dialog open={open}>
-      <DialogTitle textAlign="center">Calculate risk</DialogTitle>
+      <DialogTitle textAlign="center">Choose player</DialogTitle>
       <DialogContent>
         <form onSubmit={(e) => e.preventDefault()}>
           <Stack
@@ -51,7 +51,8 @@ export const DialogAddPlayerToTeam = ({
                       setSelectedPlayer(player);
                     }}
                   >
-                    {player.name} - {getPositionName(player, positions)}
+                    {player.name} - {getPositionName(player, positions)} -{" "}
+                    {player.price / 10}$
                   </MenuItem>
                 ))}
             </Select>

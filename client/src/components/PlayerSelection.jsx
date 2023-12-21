@@ -3,7 +3,7 @@ import { getPositionName, getPlayerPositions, getPlayers } from "../utils";
 import FootballField from "../components/FootballField";
 import "./PlayerSelection.css";
 
-const INITIAL_BUDGET = 100;
+const INITIAL_BUDGET = 60;
 
 function PlayerSelection() {
   const [players, setPlayers] = useState([]);
@@ -53,6 +53,7 @@ function PlayerSelection() {
                 <li>
                   {player.name} - {getPositionName(player, playerPositions)} -{" "}
                   {number}
+                  <p>Price: {player.price / 10}</p>
                 </li>
               ))}
             </ul>
@@ -70,8 +71,8 @@ function PlayerSelection() {
                 ...selectedPlayersWithNumber,
                 playerWithNumber,
               ]);
-              console.log("player", playerWithNumber);
-              setBudget(budget - playerWithNumber.player.price);
+
+              setBudget(budget - playerWithNumber.player.price / 10);
             }}
           />
         </div>
