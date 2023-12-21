@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { getPositionName, getPlayerPositions, getPlayers } from "../utils";
 import FootballField from "../components/FootballField";
 import "./PlayerSelection.css";
+import { addTeam } from "../utils";
+import { Button } from "@mui/material";
 
 const INITIAL_BUDGET = 60;
 
@@ -40,6 +42,26 @@ function PlayerSelection() {
     fetchPlayerPositions();
   }, []);
 
+  const handleSubmission = async () => {
+    try {
+      // Add logic to format the team data as needed
+      const teamData = {
+        // ...format your team data here based on your backend requirements
+        selectedPlayers: selectedPlayersWithNumber,
+        budget: budget,
+      };
+
+      // Call your addTeam function to submit the team to the database
+      const response = await addTeam(teamData);
+
+      // Handle the response as needed (e.g., show a success message)
+      console.log("Team submitted successfully:", response);
+    } catch (error) {
+      console.error("Error submitting team:", error);
+      // Handle the error (e.g., show an error message)
+    }
+  };
+
   return (
     <div className="container">
       <h1>Fantasy football ⚽️</h1>
@@ -53,14 +75,22 @@ function PlayerSelection() {
                 <li>
                   {player.name} - {getPositionName(player, playerPositions)} -{" "}
                   {number}
-                  <p>Price: {player.price / 10}</p>
                 </li>
               ))}
             </ul>
           )}
+          <div>
+            <Button
+              onClick={handleSubmission}
+              disabled={selectedPlayersWithNumber.length !== 11}
+            >
+              Submit Team
+            </Button>
+          </div>
           <h3>Your budget:</h3>
           {budget}
         </div>
+
         <div className="field">
           <FootballField
             players={players}
