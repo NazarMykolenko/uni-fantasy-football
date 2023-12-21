@@ -17,6 +17,8 @@ import ListItemText from "@mui/material/ListItemText";
 import { Home, Menu, Money, Receipt, SportsSoccer } from "@mui/icons-material";
 import { IconButton } from "@mui/material";
 import PlayerSelection from "./components/PlayerSelection";
+import SignIn from "./components/SignIn";
+import SignUp from "./components/SignUp";
 import "./App.css";
 
 function App() {
@@ -111,9 +113,8 @@ function App() {
             </div>
           }
         />
-        <Route path="/page1" element={<div>Page ⚽️</div>} />
-        <Route path="/page2" element={<div>Page ⚽️</div>} />
-        <Route path="/page3" element={<div>Page ⚽️</div>} />
+        <Route path="/sign-in" element={<SignIn />} />
+        <Route path="/sign-up" element={<SignUp />} />
       </Routes>
     </BrowserRouter>
   );
