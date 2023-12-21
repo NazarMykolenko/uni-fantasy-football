@@ -35,12 +35,72 @@ fastify.register(require("@fastify/basic-auth"), { validate, authenticate });
 
 fastify.get("/", async (_, reply) => reply.send("Fantasy football ⚽️"));
 
+fastify.get("/players", async (_, reply) => {
+  console.log("Get players 1");
+  const client = await fastify.pg.connect();
+  console.log("Get players 2");
+  const players = await dbGetPlayers(client);
+  console.log("Get players 3");
+  reply.send(players);
+  console.log("Get players 4");
+  client.release();
+  console.log("Get players 5");
+});
+
+fastify.get("/official-teams", async (_, reply) => {
+  const client = await fastify.pg.connect();
+  const official_teams = await dbGetOfficialTeams(client);
+  reply.send(official_teams);
+  client.release();
+});
+
+fastify.get("/player-positions", async (_, reply) => {
+  const client = await fastify.pg.connect();
+  const player_positions = await dbGetPlayerPositions(client);
+  reply.send(player_positions);
+  client.release();
+});
+
+fastify.get("/players", async (_, reply) => {
+  console.log("Get players 1");
+  const client = await fastify.pg.connect();
+  console.log("Get players 2");
+  const players = await dbGetPlayers(client);
+  console.log("Get players 3");
+  reply.send(players);
+  console.log("Get players 4");
+  client.release();
+  console.log("Get players 5");
+});
+
+fastify.get("/official-teams", async (_, reply) => {
+  const client = await fastify.pg.connect();
+  const official_teams = await dbGetOfficialTeams(client);
+  reply.send(official_teams);
+  client.release();
+});
+
+fastify.get("/player-positions", async (_, reply) => {
+  const client = await fastify.pg.connect();
+  const player_positions = await dbGetPlayerPositions(client);
+  reply.send(player_positions);
+  client.release();
+});
+
 fastify.listen({ port: PORT }, (err) => {
   if (err) throw err;
   console.log(`server listening on ${fastify.server.address().port}`);
 });
 
+const REFRESH_MS = 1000 * 60 * 60;
+const URL_API_FANTASY_FOOTBALL =
+  "https://fantasy.premierleague.com/api/bootstrap-static/";
+
 const interval = setInterval(job, REFRESH_MS);
+// Run in terminal: export NODE_ENV=production
+if (process.env.NODE_ENV === "production") {
+  job();
+}
 
 async function job() {
   const client = await fastify.pg.connect();

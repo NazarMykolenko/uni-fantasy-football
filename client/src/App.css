@@ -1,10 +1,17 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap");
+
 body {
-  background: rgb(34, 195, 87);
-  background: linear-gradient(
-    190deg,
-    rgba(34, 195, 87, 1) 0%,
-    rgba(160, 45, 253, 1) 100%
-  );
+  font-family: "Roboto", sans-serif;
+  background-image: url("https://th.bing.com/th/id/R.b6b1982bad400e9402a705d553562884?rik=CRusBga84xUw2g&riu=http%3a%2f%2fwallpapercave.com%2fwp%2f9C4VGmZ.jpg&ehk=lhvNRjFpwIKfPRKJW0k0lD8cWOLJxaaMpWlJVhEmFWM%3d&risl=&pid=ImgRaw&r=0");
+  background-size: cover; /* Adjust as needed */
+  background-position: center; /* Adjust as needed */
   background-repeat: no-repeat;
-  height: 100vh;
+  height: 100vh; /* Set the height to cover the entire viewport */
+  margin: 0; /* Remove default margin */
+}
+
+li,
+ul {
+  margin: 0;
+  padding: 0;
 }

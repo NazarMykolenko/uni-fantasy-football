@@ -1,44 +1,84 @@
 import React, { useState, useEffect } from "react";
-import { getPlayers } from "../utils";
-function App() {
+import { getPositionName, getPlayerPositions, getPlayers } from "../utils";
+import FootballField from "../components/FootballField";
+import "./PlayerSelection.css";
+
+const INITIAL_BUDGET = 60;
+
+function PlayerSelection() {
   const [players, setPlayers] = useState([]);
-  const [selectedPlayers, setSelectedPlayers] = useState([]);
+  const [playerPositions, setPlayerPositions] = useState([]);
+  const [selectedPlayersWithNumber, setSelectedPlayersWithNumber] = useState(
+    []
+  );
+  console.log("selected", selectedPlayersWithNumber);
+  const [budget, setBudget] = useState(INITIAL_BUDGET);
 
   useEffect(() => {
-    (async () => {
-      const players = await getPlayers();
-      setPlayers(players);
-    })();
+    const fetchPlayers = async () => {
+      try {
+        const fetchedPlayers = await getPlayers();
+        setPlayers(fetchedPlayers);
+      } catch (error) {
+        console.error("Error fetching players:", error);
+      }
+    };
+
+    fetchPlayers();
   }, []);
 
-  const handleAddPlayer = (player) => {
-    // Add the selected player to the list
-    setSelectedPlayers([...selectedPlayers, player]);
-  };
+  useEffect(() => {
+    const fetchPlayerPositions = async () => {
+      try {
+        const fetchedPlayerPositions = await getPlayerPositions();
+        setPlayerPositions(fetchedPlayerPositions);
+      } catch (error) {
+        console.error("Error fetching players positions:", error);
+      }
+    };
+
+    fetchPlayerPositions();
+  }, []);
 
   return (
-    <div>
-      <h1>Fantasy Football League</h1>
-      <h2>Available Players</h2>
-      <ul>
-        {players.map((player) => (
-          <li key={player._id}>
-            {player.name} - {player.position}
-            <button onClick={() => handleAddPlayer(player)}>Add to List</button>
-          </li>
-        ))}
-      </ul>
+    <div className="container">
+      <h1>Fantasy football ⚽️</h1>
+      <h2>Choose your team 👇</h2>
+      <div className="content">
+        <div className="team-list">
+          <h3>Your team 💪</h3>
+          {!!selectedPlayersWithNumber.length && (
+            <ul>
+              {selectedPlayersWithNumber.map(({ player, number }) => (
+                <li>
+                  {player.name} - {getPositionName(player, playerPositions)} -{" "}
+                  {number}
+                  <p>Price: {player.price / 10}</p>
+                </li>
+              ))}
+            </ul>
+          )}
+          <h3>Your budget:</h3>
+          {budget}
+        </div>
+        <div className="field">
+          <FootballField
+            players={players}
+            positions={playerPositions}
+            selectedPlayersWithNumber={selectedPlayersWithNumber}
+            onSelectedPlayersWithNumberChange={(playerWithNumber) => {
+              setSelectedPlayersWithNumber([
+                ...selectedPlayersWithNumber,
+                playerWithNumber,
+              ]);
 
-      <h2>Selected Players</h2>
-      <ul>
-        {selectedPlayers.map((player) => (
-          <li key={player._id}>
-            {player.name} - {player.position}
-          </li>
-        ))}
-      </ul>
+              setBudget(budget - playerWithNumber.player.price / 10);
+            }}
+          />
+        </div>
+      </div>
     </div>
   );
 }
 
-export default App;
+export default PlayerSelection;
