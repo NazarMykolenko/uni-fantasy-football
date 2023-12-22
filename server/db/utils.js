@@ -17,28 +17,110 @@ async function dbGetOfficialTeams(client) {
   return result.rows;
 }
 
+async function dbGetUserTeam(client, user_id) {
+  const query = `SELECT * FROM user_teams WHERE user_id = $1`;
+  const values = [user_id];
+  const result = await client.query(query, values);
+  return result.rows;
+}
+
+async function dbGetUserTeamSchema(client, user_id) {
+  const userTeamIdQuery = `SELECT user_team_id FROM user_teams WHERE user_id = $1`;
+  const userTeamIdResult = await client.query(userTeamIdQuery, [user_id]);
+  const user_team_id = userTeamIdResult.rows[0]?.user_team_id;
+
+  const query = `SELECT * FROM "team_players" WHERE user_team_id = $1`;
+  const values = [user_team_id];
+  const result = await client.query(query, values);
+  return result.rows;
+}
+
 async function dbGetPlayerPositions(client) {
   const query = `SELECT * FROM "player_positions"`;
   const result = await client.query(query);
   return result.rows;
 }
 
-async function addUser(client, username, email, password) {
+async function dbAddUser(client, username, email, password) {
   const query = `INSERT INTO "users" (username, email, password) VALUES ($1, $2, $3)`;
   const values = [username, email, password];
   const result = await client.query(query, values);
   return result.rows;
 }
 
-// async function addUserTeam(client, team) {
-//  const query =
-//     "";
-//   const values = [{player_id: 1, ...}];
-//   const result = await client.query(query, values);
-//   return result.rows;
-// }
+async function dbAddUserTeam(client, user_id, budget, team) {
+  try {
+    await client.query("BEGIN");
 
-async function insertOfficialTeam(client, official_team) {
+    await updateUserTeams(client, user_id, budget, team);
+    await deleteCurrentTeamPlayers(client, user_id);
+    await insertNewTeamPlayers(client, user_id, team);
+
+    await client.query("COMMIT");
+  } catch (error) {
+    await client.query("ROLLBACK");
+    throw error;
+  }
+}
+
+async function updateUserTeams(client, user_id, budget, team) {
+  const query = `
+   UPDATE "user_teams"
+   SET total_coefficient = total_coefficient + $1, budget = $2
+   WHERE user_id = $3;
+ `;
+
+  const values = [
+    Object.values(team).reduce((sum, player) => sum + player.total_points, 0),
+    budget,
+    user_id,
+  ];
+
+  const result = await client.query(query, values);
+  return result.rows;
+}
+
+async function deleteCurrentTeamPlayers(client, user_id) {
+  const query = `
+   DELETE FROM "team_players"
+   WHERE user_team_id = (SELECT user_team_id FROM user_teams WHERE user_id = $1);
+ `;
+  const values = [user_id];
+  const result = await client.query(query, values);
+  return result.rows;
+}
+
+async function insertNewTeamPlayers(client, user_id, team) {
+  const userTeamIdQuery =
+    "SELECT user_team_id FROM user_teams WHERE user_id = $1";
+  const userTeamIdResult = await client.query(userTeamIdQuery, [user_id]);
+  const user_team_id = userTeamIdResult.rows[0]?.user_team_id;
+
+  if (!user_team_id) {
+    return userTeamIdResult.rows;
+  }
+
+  const values = Object.values(team).flatMap((player) => [
+    user_team_id,
+    player.player_id,
+    player.nuber,
+  ]);
+
+  const placeholders = Array.from(
+    { length: values.length / 3 },
+    (_, i) => `($${i * 3 + 1}, $${i * 3 + 2}, $${i * 3 + 3})`
+  ).join(", ");
+
+  const query = `
+   INSERT INTO "team_players" (user_team_id, player_id, position_number)
+   VALUES ${placeholders};
+ `;
+
+  const result = await client.query(query, values);
+  return result.rows;
+}
+
+async function dbInsertOfficialTeam(client, official_team) {
   const query = `
   INSERT INTO "official_teams" (official_team_id, official_team_name, official_team_name_short)
   VALUES ($1, $2, $3)
@@ -53,7 +135,7 @@ async function insertOfficialTeam(client, official_team) {
   return result.rows;
 }
 
-async function insertPlayerPosition(client, player_position) {
+async function dbInsertPlayerPosition(client, player_position) {
   const query = `
  INSERT INTO "player_positions" (position_id, position_name, position_name_short)
  VALUES ($1, $2, $3)
@@ -68,7 +150,7 @@ async function insertPlayerPosition(client, player_position) {
   return result.rows;
 }
 
-async function upsertPlayerInfo(client, player) {
+async function dbUpsertPlayerInfo(client, player) {
   const query = `
    INSERT INTO players (
      player_id, name, official_team_id, position_id, price, rating,
@@ -154,13 +236,16 @@ async function upsertPlayerInfo(client, player) {
 }
 
 module.exports = {
-  addUser,
+  dbGetUserTeam,
+  dbGetUserTeamSchema,
+  dbAddUser,
+  dbAddUserTeam,
   dbGetUser,
   dbGetPlayers,
   dbGetOfficialTeams,
   dbGetPlayerPositions,
-  insertOfficialTeam,
-  insertPlayerPosition,
-  insertPlayerPosition,
-  upsertPlayerInfo,
+  dbInsertOfficialTeam,
+  dbInsertPlayerPosition,
+  dbInsertPlayerPosition,
+  dbUpsertPlayerInfo,
 };

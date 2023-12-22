@@ -1,11 +1,14 @@
 const { log } = require("console");
 const {
-  addUser,
+  dbGetUserTeam,
+  dbGetUserTeamSchema,
+  dbAddUser,
+  dbAddUserTeam,
   dbGetUser,
   dbGetPlayers,
-  upsertPlayerInfo,
-  insertOfficialTeam,
-  insertPlayerPosition,
+  dbUpsertPlayerInfo,
+  dbInsertOfficialTeam,
+  dbInsertPlayerPosition,
   dbGetOfficialTeams,
   dbGetPlayerPositions,
 } = require("./db/utils");
@@ -18,7 +21,6 @@ const fastify = require("fastify")({
 });
 
 const PORT = 8000;
-const authenticate = { realm: "example" };
 const REFRESH_MS = 10000 * 60 * 60;
 const URL_API_FANTASY_FOOTBALL =
   "https://fantasy.premierleague.com/api/bootstrap-static/";
@@ -53,26 +55,26 @@ async function job() {
 
   if (!officialTeams.length) {
     for (team of data.teams) {
-      const result = await insertOfficialTeam(client, team);
+      const result = await dbInsertOfficialTeam(client, team);
       console.log(JSON.stringify(result));
     }
   }
 
   if (!playerPositions.length) {
     for (playerPosition of data.element_types) {
-      const result = await insertPlayerPosition(client, playerPosition);
+      const result = await dbInsertPlayerPosition(client, playerPosition);
       console.log(JSON.stringify(result));
     }
   }
 
   for (const player of data.elements) {
-    const result = await upsertPlayerInfo(client, player);
+    const result = await dbUpsertPlayerInfo(client, player);
   }
 }
 
-fastify.get("/users/:userId", async (_, reply) => {
+fastify.get("/users/:userId", async (req, reply) => {
   const client = await fastify.pg.connect();
-  const { user_id } = request.params;
+  const user_id = +req.params.userId;
   const user = await dbGetUser(client, user_id);
   reply.send(user);
   client.release();
@@ -99,9 +101,36 @@ fastify.get("/player-positions", async (_, reply) => {
   client.release();
 });
 
-fastify.post("/user-team/:userId", async (req, reply) => {
+fastify.get("/user-team-schemas/:userId", async (req, reply) => {
   const client = await fastify.pg.connect();
-  console.log(JSON.stringify(req.body, null, 2));
-  reply.send({});
+  const user_id = +req.params.userId;
+  const result = await dbGetUserTeamSchema(client, user_id);
+  reply.send(result);
+  client.release();
+});
+
+fastify.post("/users", async (req, reply) => {
+  const client = await fastify.pg.connect();
+  const { username, email, password } = req.body;
+  const result = await dbAddUser(client, username, email, password);
+  reply.send({ message: "User was added successfully!" });
+  client.release();
+});
+
+fastify.get("/user-teams/:userId", async (req, reply) => {
+  const client = await fastify.pg.connect();
+  const user_id = +req.params.userId;
+  const result = await dbGetUserTeam(client, user_id);
+  reply.send(result);
+  client.release();
+});
+
+fastify.post("/user-teams/:userId", async (req, reply) => {
+  const client = await fastify.pg.connect();
+  const user_id = +req.params.userId;
+  const { budget, ...team } = req.body;
+  const roundedBudget = budget.toFixed(2);
+  const result = await dbAddUserTeam(client, user_id, roundedBudget, team);
+  reply.send({ message: "User team was added successfully!" });
   client.release();
 });

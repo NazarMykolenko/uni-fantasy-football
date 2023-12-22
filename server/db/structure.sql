@@ -8,7 +8,7 @@ CREATE TABLE "users" (
 CREATE TABLE "user_teams" (
     user_team_id SERIAL PRIMARY KEY,
     user_id INT REFERENCES "users"(user_id),
-    user_team_name VARCHAR(20) NOT NULL,
+    budget DECIMAL(5, 2) DEFAULT 60.00,
     total_coefficient DECIMAL(5, 2) DEFAULT 0.00
 );
 
@@ -63,8 +63,8 @@ CREATE TABLE "players" (
 );
 
 CREATE TABLE "team_players" (
+    t_p_id SERIAL PRIMARY KEY,
     user_team_id INT REFERENCES "user_teams"(user_team_id),
     player_id INT REFERENCES "players"(player_id),
-    position_number INT NOT NULL,
-    PRIMARY KEY (user_team_id, player_id)
+    position_number INT NOT NULL
 );
