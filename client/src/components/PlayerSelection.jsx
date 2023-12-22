@@ -4,6 +4,7 @@ import FootballField from "../components/FootballField";
 import "./PlayerSelection.css";
 import { addTeam } from "../utils";
 import { Button } from "@mui/material";
+import { getUsers } from "../utils";
 
 const INITIAL_BUDGET = 60;
 
@@ -15,6 +16,20 @@ function PlayerSelection() {
   );
   console.log("selected", selectedPlayersWithNumber);
   const [budget, setBudget] = useState(INITIAL_BUDGET);
+  const [users, setUsers] = useState([]);
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const fetchedUsers = await getUsers();
+        setUsers(fetchedUsers);
+      } catch (error) {
+        console.error("Error fetching players:", error);
+      }
+    };
+
+    fetchUsers();
+  }, []);
 
   useEffect(() => {
     const fetchPlayers = async () => {
@@ -44,10 +59,14 @@ function PlayerSelection() {
 
   const handleSubmission = async () => {
     try {
-      const teamData = {
-        selectedPlayers: selectedPlayersWithNumber
-      };
-
+      // Add logic to format the team data as needed
+      const teamData = selectedPlayersWithNumber.map(({ player, number }) => ({
+        player_id: player.player_id,
+        total_points: +player.rating,
+        nuber: number, // You can replace this with the actual value you want for total points
+      }));
+      console.log("!!!", teamData);
+      // Call your addTeam function to submit the team to the database
       const response = await addTeam(teamData);
 
       console.log("Team submitted successfully:", response);

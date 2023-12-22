@@ -65,5 +65,6 @@ CREATE TABLE "players" (
 CREATE TABLE "team_players" (
     user_team_id INT REFERENCES "user_teams"(user_team_id),
     player_id INT REFERENCES "players"(player_id),
+    position_number INT NOT NULL,
     PRIMARY KEY (user_team_id, player_id)
 );

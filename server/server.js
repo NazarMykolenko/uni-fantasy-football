@@ -99,8 +99,9 @@ fastify.get("/player-positions", async (_, reply) => {
   client.release();
 });
 
-fastify.post("/user-team", async (req, reply) => {
+fastify.post("/user-team/:userId", async (req, reply) => {
   const client = await fastify.pg.connect();
   console.log(JSON.stringify(req.body, null, 2));
+  reply.send({});
   client.release();
 });
