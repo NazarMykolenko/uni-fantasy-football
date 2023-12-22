@@ -16,7 +16,6 @@ const fastify = require("fastify")({
     },
   },
 });
-const crypto = require("crypto");
 
 const PORT = 8000;
 const authenticate = { realm: "example" };
@@ -30,9 +29,6 @@ fastify.register(require("@fastify/postgres"), {
 });
 fastify.register(require("@fastify/multipart"));
 fastify.register(require("@fastify/cors"));
-fastify.register(require("@fastify/formbody"));
-fastify.register(require("@fastify/auth"));
-fastify.register(require("@fastify/basic-auth"), { validate, authenticate });
 
 fastify.get("/", async (_, reply) => reply.send("Fantasy football ⚽️"));
 
@@ -42,7 +38,7 @@ fastify.listen({ port: PORT }, (err) => {
 });
 
 const interval = setInterval(job, REFRESH_MS);
-// Run in terminal: export NODE_ENV=production
+
 // if (process.env.NODE_ENV === "production") {
 //   job();
 // }
@@ -74,50 +70,12 @@ async function job() {
   }
 }
 
-async function validate(email, password, req, reply) {
+fastify.get("/users/:userId", async (_, reply) => {
   const client = await fastify.pg.connect();
-
-  try {
-    const result = await dbGetUser(client, email);
-
-    if (result.length === 0) {
-      throw new Error("User not found");
-    }
-
-    const [salt, hashedPassword] = result[0].password.split(`$`);
-    const [_, hashedInputPassword] = hashPassword(password, salt).split(`$`);
-
-    if (hashedPassword != hashedInputPassword) {
-      throw new Error("Invalid password");
-    }
-
-    reply.send(result);
-  } catch (error) {
-    console.error("Authentication error:", error.message);
-    reply.code(401).send({ message: "Authentication error" });
-  } finally {
-    client.release();
-  }
-}
-
-function generateSalt() {
-  return crypto.randomBytes(16).toString("hex");
-}
-
-function hashPassword(password, salt) {
-  const hash = crypto.createHmac("sha256", salt).update(password).digest("hex");
-  return `${salt}$${hash}`;
-}
-
-fastify.after(() => {
-  fastify.route({
-    method: "GET",
-    url: "/login",
-    onRequest: fastify.basicAuth,
-    handler: async (req, reply) => {
-      return;
-    },
-  });
+  const { user_id } = request.params;
+  const user = await dbGetUser(client, user_id);
+  reply.send(user);
+  client.release();
 });
 
 fastify.get("/players", async (_, reply) => {
@@ -141,39 +99,8 @@ fastify.get("/player-positions", async (_, reply) => {
   client.release();
 });
 
-fastify.post("/register", async (request, reply) => {
+fastify.post("/user-team", async (req, reply) => {
   const client = await fastify.pg.connect();
-
-  try {
-    const { username, email, password } = request.body;
-
-    if (!username || !email || !password) {
-      reply.code(400).send({ error: "Missing required fields" });
-      return;
-    }
-
-    if (password.length < 6) {
-      reply.send({ message: "Password must be a least 6 characters long" });
-    }
-
-    const existingUser = await dbGetUser(client, email);
-
-    if (existingUser.length > 0) {
-      reply.code(400).send({ error: "Username is already in use" });
-    }
-
-    const salt = generateSalt();
-    const hashedPassword = hashPassword(password, salt);
-    const resultOfAdding = await addUser(
-      client,
-      username,
-      email,
-      hashedPassword
-    );
-
-    reply.code(201).send({ message: "User registered successfully" });
-  } catch (error) {
-    console.error("Registration error:", error.message);
-    reply.code(500).send({ error: "Internal Server Error" });
-  }
+  console.log(JSON.stringify(req.body, null, 2));
+  client.release();
 });
