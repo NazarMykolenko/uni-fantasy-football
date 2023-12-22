@@ -60,12 +60,12 @@ function PlayerSelection() {
   const handleSubmission = async () => {
     try {
       // Add logic to format the team data as needed
-      const teamData = selectedPlayersWithNumber.map(({ player, number }) => ({
+      const playersData = selectedPlayersWithNumber.map(({ player, number }) => ({
         player_id: player.player_id,
         total_points: +player.rating,
         nuber: number, // You can replace this with the actual value you want for total points
       }));
-      console.log("!!!", teamData);
+      const teamData = {...playersData, budget};
       // Call your addTeam function to submit the team to the database
       const response = await addTeam(teamData);
 

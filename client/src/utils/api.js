@@ -3,7 +3,7 @@ export const URL_API_PLAYERS = `${URL_API}/players`;
 export const URL_API_PLAYERS_POSITIONS = `${URL_API}/player-positions`;
 const USER_ID = 1;
 export const URL_API_USER_TEAM = `${URL_API}/user-team/${USER_ID}`;
-export const URL_API_USERS = `${URL_API}/users`;
+export const URL_API_USERS = `${URL_API}/users/${USER_ID}`;
 
 export const getUsers = async () => {
   const response = await fetch(URL_API_USERS);
