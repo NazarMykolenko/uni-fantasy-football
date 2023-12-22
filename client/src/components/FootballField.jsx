@@ -80,6 +80,7 @@ const FootballField = ({
         selectedPostionId={selectedPostionId}
         onSubmit={onSelectedPlayersWithNumberChange}
         number={playerNumber}
+        selectedPlayersWithNumber={selectedPlayersWithNumber}
       />
     </div>
   );

@@ -19,15 +19,14 @@ export const DialogAddPlayerToTeam = ({
   positions,
   selectedPostionId,
   number,
+  selectedPlayersWithNumber,
 }) => {
   const [selectedPlayer, setSelectedPlayer] = useState();
-
   const handleSubmit = useCallback(() => {
     onSubmit({ player: selectedPlayer, number });
 
     onClose();
   }, [number, onClose, onSubmit, selectedPlayer]);
-
   return (
     <Dialog open={open}>
       <DialogTitle textAlign="center">Choose player</DialogTitle>
@@ -42,7 +41,15 @@ export const DialogAddPlayerToTeam = ({
           >
             <Select>
               {players
-                .filter(({ position_id }) => position_id === selectedPostionId)
+                .filter(
+                  ({ position_id, player_id }) =>
+                    position_id === selectedPostionId &&
+                    !selectedPlayersWithNumber.some(
+                      (selectedPlayer) =>
+                        selectedPlayer.player.player_id === player_id
+                    )
+                )
+
                 .map((player) => (
                   <MenuItem
                     key={player._id}
