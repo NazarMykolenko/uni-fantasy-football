@@ -77,7 +77,7 @@ function PlayerSelection() {
       try {
         const fetchedUserBudget = await getUserTeamBudget();
         console.log("!!!!", fetchedUserBudget);
-        setBudget(fetchedUserBudget[0].budget);
+        setBudget(+fetchedUserBudget[0].budget);
         //setSelectedPlayersWithNumber(fetchedUserTeam);
       } catch (error) {
         console.error("Error fetching players:", error);
@@ -148,7 +148,7 @@ function PlayerSelection() {
               </ul>
             )}
             <h3>Your budget:</h3>
-            {budget}
+            {budget.toFixed(2)}
             <div>
               <Button
                 color="primary"
