@@ -17,6 +17,7 @@ function PlayerSelection() {
   const [selectedPlayersWithNumber, setSelectedPlayersWithNumber] =
     useState(null);
   const [budget, setBudget] = useState(INITIAL_BUDGET);
+  const [buttonState, setButtonState] = useState(false);
 
   useEffect(() => {
     const fetchUserTeam = async () => {
@@ -35,6 +36,7 @@ function PlayerSelection() {
     const fetchPlayers = async () => {
       try {
         const fetchedPlayers = await getPlayers();
+
         setPlayers(fetchedPlayers);
       } catch (error) {
         console.error("Error fetching players:", error);
@@ -48,6 +50,9 @@ function PlayerSelection() {
     const fetchSchema = async () => {
       try {
         const schema = await getUserTeamSchema();
+        if (schema.length) {
+          setButtonState(true);
+        }
         setSelectedPlayersWithNumber(
           schema.map(({ player_id, position_number }) => {
             return {
@@ -97,6 +102,7 @@ function PlayerSelection() {
 
       // Call your addTeam function to submit the team to the database
       const response = await addTeam(teamData);
+      setButtonState(true);
     } catch (error) {
       console.error("Error submitting team:", error);
     }
@@ -130,7 +136,8 @@ function PlayerSelection() {
                 variant="contained"
                 onClick={handleSubmission}
                 disabled={
-                  selectedPlayersWithNumber.length !== NUMBER_OF_PLAYERS_IN_TEAM
+                  selectedPlayersWithNumber.length !==
+                    NUMBER_OF_PLAYERS_IN_TEAM || buttonState
                 }
               >
                 Submit Team
