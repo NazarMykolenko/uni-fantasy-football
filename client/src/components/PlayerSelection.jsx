@@ -190,6 +190,7 @@ function PlayerSelection() {
                 setPlayers(players);
 
                 setBudget(budget - playerWithNumber.player.price / 10);
+                setKof(kof + +playerWithNumber.player.rating);
               }}
             />
           </div>
