@@ -13,5 +13,12 @@ body {
 li,
 ul {
   margin: 0;
-  padding: 0;
+  list-style: none;
+  padding: 3px;
+}
+.budget-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
 }

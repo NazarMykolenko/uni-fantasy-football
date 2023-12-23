@@ -5,7 +5,7 @@ import "./PlayerSelection.css";
 import { addTeam } from "../utils";
 import { Button, CircularProgress } from "@mui/material";
 import { getUserTeam, notify } from "../utils";
-
+import Card from "./Card";
 import { getUserTeamSchema } from "../utils";
 import { getUserTeamBudget } from "../utils";
 
@@ -19,6 +19,7 @@ function PlayerSelection() {
     useState(null);
   const [budget, setBudget] = useState(INITIAL_BUDGET);
   const [buttonState, setButtonState] = useState(false);
+  const [kof, setKof] = useState(0);
 
   useEffect(() => {
     const fetchUserTeam = async () => {
@@ -51,6 +52,7 @@ function PlayerSelection() {
     const fetchSchema = async () => {
       try {
         const schema = await getUserTeamSchema();
+
         if (schema.length) {
           setButtonState(true);
         }
@@ -76,8 +78,11 @@ function PlayerSelection() {
     const fetchUserBudget = async () => {
       try {
         const fetchedUserBudget = await getUserTeamBudget();
-        console.log("!!!!", fetchedUserBudget);
+        console.log("!!!!!", fetchedUserBudget);
+        console.log("coeff", fetchedUserBudget[0].total_coefficient);
         setBudget(+fetchedUserBudget[0].budget);
+        setKof(+fetchedUserBudget[0].total_coefficient);
+
         //setSelectedPlayersWithNumber(fetchedUserTeam);
       } catch (error) {
         console.error("Error fetching players:", error);
@@ -135,7 +140,7 @@ function PlayerSelection() {
         <CircularProgress />
       ) : (
         <div className="content">
-          <div className="team-list">
+          <Card className="team-list">
             <h3>Your team 💪</h3>
             {!!selectedPlayersWithNumber.length && (
               <ul>
@@ -147,8 +152,16 @@ function PlayerSelection() {
                 ))}
               </ul>
             )}
-            <h3>Your budget:</h3>
-            {budget.toFixed(2)}
+            <div class="budget-container">
+              <div>
+                <h3>Your budget:</h3>
+                {budget.toFixed(2)}
+              </div>
+              <div>
+                <h3>Your coeff:</h3>
+                {kof}
+              </div>
+            </div>
             <div>
               <Button
                 color="primary"
@@ -162,7 +175,7 @@ function PlayerSelection() {
                 Submit Team
               </Button>
             </div>
-          </div>
+          </Card>
 
           <div className="field">
             <FootballField
