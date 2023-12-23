@@ -7,6 +7,7 @@ import { Button, CircularProgress } from "@mui/material";
 import { getUserTeam, notify } from "../utils";
 
 import { getUserTeamSchema } from "../utils";
+import { getUserTeamBudget } from "../utils";
 
 const NUMBER_OF_PLAYERS_IN_TEAM = 11;
 const INITIAL_BUDGET = 60;
@@ -72,6 +73,24 @@ function PlayerSelection() {
   }, [players]);
 
   useEffect(() => {
+    const fetchUserBudget = async () => {
+      try {
+        const fetchedUserBudget = await getUserTeamBudget();
+        console.log("!!!!", fetchedUserBudget);
+        setBudget(fetchedUserBudget[0].budget);
+        //setSelectedPlayersWithNumber(fetchedUserTeam);
+      } catch (error) {
+        console.error("Error fetching players:", error);
+      }
+    };
+    fetchUserBudget();
+
+    // if ({ budget }.length) {
+    //   setBudget({ budget });
+    // }
+  }, []);
+
+  useEffect(() => {
     const fetchPlayerPositions = async () => {
       try {
         const fetchedPlayerPositions = await getPlayerPositions();
@@ -129,7 +148,7 @@ function PlayerSelection() {
               </ul>
             )}
             <h3>Your budget:</h3>
-            {budget.toFixed(2)}
+            {budget}
             <div>
               <Button
                 color="primary"
