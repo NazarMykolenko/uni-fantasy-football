@@ -1,5 +1,27 @@
 const { log } = require("console");
 const {
+  getOfficialUserTeamsComparison,
+  getTopPlayersFromUserTeams,
+  getUserTeamPlayersICT,
+  getPricesOfAllUserTeams,
+  getNonFieldPlayers,
+  getFieldPlayers,
+  getPlayersCharacteristics,
+  getBestPlayer,
+  getWorstPlayer,
+  getAverageRatingOfPlayers,
+  getPlayersWithoutCOPNextRound,
+  getPlayersWithCOPNextRound,
+  getMIDsAndFWDs,
+  getGKsAndDEFs,
+  getCheapPlayers,
+  getTopPlayers,
+  getUserInfoAndBudget,
+  getPlayerCountForPosition,
+  getAverageRatingForPlayerPosition,
+  getSortedPlayers,
+  getUserTotalCoefficient,
+  getPlayersAndTheirTeams,
   getUserTeam,
   getUserTeamSchemaByUserId,
   addUser,
@@ -78,22 +100,92 @@ fastify.get("/users/:userId", async (req, reply) => {
 
 fastify.get("/players", async (_, reply) => {
   const client = await fastify.pg.connect();
-  const players = await getPlayers(client);
-  reply.send(players);
+  const result = await getPlayers(client);
+  reply.send(result);
+  client.release();
+});
+
+fastify.get("/sorted-players", async (_, reply) => {
+  const client = await fastify.pg.connect();
+  const result = await getSortedPlayers(client);
+  reply.send(result);
+  client.release();
+});
+
+fastify.get("/user-team-prices", async (_, reply) => {
+  const client = await fastify.pg.connect();
+  const result = await getPricesOfAllUserTeams(client);
+  reply.send(result);
+  client.release();
+});
+
+fastify.get("/position-average-rating", async (_, reply) => {
+  const client = await fastify.pg.connect();
+  const result = await getAverageRatingForPlayerPosition(client);
+  reply.send(result);
+  client.release();
+});
+
+fastify.get("/players-average-rating", async (_, reply) => {
+  const client = await fastify.pg.connect();
+  const result = await getAverageRatingOfPlayers(client);
+  reply.send(result);
+  client.release();
+});
+
+fastify.get("/player-count-for-position", async (_, reply) => {
+  const client = await fastify.pg.connect();
+  const result = await getPlayerCountForPosition(client);
+  reply.send(result);
+  client.release();
+});
+
+fastify.get("/non-field-players", async (_, reply) => {
+  const client = await fastify.pg.connect();
+  const result = await getNonFieldPlayers(client);
+  reply.send(result);
+  client.release();
+});
+
+fastify.get("/field-players", async (_, reply) => {
+  const client = await fastify.pg.connect();
+  const result = await getFieldPlayers(client);
+  reply.send(result);
+  client.release();
+});
+
+fastify.get("/official-user-comparison", async (_, reply) => {
+  const client = await fastify.pg.connect();
+  const result = await getOfficialUserTeamsComparison(client);
+  reply.send(result);
   client.release();
 });
 
 fastify.get("/official-teams", async (_, reply) => {
   const client = await fastify.pg.connect();
-  const official_teams = await getOfficialTeams(client);
-  reply.send(official_teams);
+  const result = await getOfficialTeams(client);
+  reply.send(result);
   client.release();
 });
 
 fastify.get("/player-positions", async (_, reply) => {
   const client = await fastify.pg.connect();
-  const player_positions = await getPlayerPositions(client);
-  reply.send(player_positions);
+  const result = await getPlayerPositions(client);
+  reply.send(result);
+  client.release();
+});
+
+fastify.get("/user-team-players-ict", async (_, reply) => {
+  const client = await fastify.pg.connect();
+  const result = await getUserTeamPlayersICT(client);
+  reply.send(result);
+  client.release();
+});
+
+fastify.get("/user-team-top-players", async (_, reply) => {
+  const client = await fastify.pg.connect();
+  const result = await getTopPlayersFromUserTeams(client);
+  reply.send(result);
   client.release();
 });
 
@@ -128,5 +220,89 @@ fastify.post("/user-teams/:userId", async (req, reply) => {
   const roundedBudget = budget.toFixed(2);
   const result = await addUserTeam(client, user_id, roundedBudget, team);
   reply.send({ message: "User team was added successfully!" });
+  client.release();
+});
+
+fastify.get("/players-and-official-teams", async (_, reply) => {
+  const client = await fastify.pg.connect();
+  const result = await getPlayersAndTheirTeams(client);
+  reply.send(result);
+  client.release();
+});
+
+fastify.get("/user-total-coefficient", async (_, reply) => {
+  const client = await fastify.pg.connect();
+  const result = await getUserTotalCoefficient(client);
+  reply.send(result);
+  client.release();
+});
+
+fastify.get("/user-info-and-budget", async (_, reply) => {
+  const client = await fastify.pg.connect();
+  const result = await getUserInfoAndBudget(client);
+  reply.send(result);
+  client.release();
+});
+
+fastify.get("/top-players", async (_, reply) => {
+  const client = await fastify.pg.connect();
+  const result = await getTopPlayers(client);
+  reply.send(result);
+  client.release();
+});
+
+fastify.get("/cheap-players", async (_, reply) => {
+  const client = await fastify.pg.connect();
+  const result = await getCheapPlayers(client);
+  reply.send(result);
+  client.release();
+});
+
+fastify.get("/def-players", async (_, reply) => {
+  const client = await fastify.pg.connect();
+  const result = await getGKsAndDEFs(client);
+  reply.send(result);
+  client.release();
+});
+
+fastify.get("/attack-players", async (_, reply) => {
+  const client = await fastify.pg.connect();
+  const result = await getMIDsAndFWDs(client);
+  reply.send(result);
+  client.release();
+});
+
+fastify.get("/players-without-cop-next-round", async (_, reply) => {
+  const client = await fastify.pg.connect();
+  const result = await getPlayersWithoutCOPNextRound(client);
+  reply.send(result);
+  client.release();
+});
+
+fastify.get("/players-with-cop-next-round", async (_, reply) => {
+  const client = await fastify.pg.connect();
+  const result = await getPlayersWithCOPNextRound(client);
+  reply.send(result);
+  client.release();
+});
+
+fastify.get("/players-best", async (_, reply) => {
+  const client = await fastify.pg.connect();
+  const result = await getBestPlayer(client);
+  reply.send(result);
+  client.release();
+});
+
+fastify.get("/players-worst", async (_, reply) => {
+  const client = await fastify.pg.connect();
+  const result = await getWorstPlayer(client);
+  reply.send(result);
+  client.release();
+});
+
+fastify.get("/players-characteristics", async (_, reply) => {
+  const client = await fastify.pg.connect();
+  const result = await getPlayersCharacteristics(client);
+  reply.send(result);
   client.release();
 });

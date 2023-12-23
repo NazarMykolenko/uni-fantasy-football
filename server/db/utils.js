@@ -11,6 +11,225 @@ async function getPlayers(client) {
   return result.rows;
 }
 
+async function getSortedPlayers(client) {
+  const query = `SELECT * FROM players ORDER BY rating DESC, price DESC;`;
+  const result = await client.query(query);
+  return result.rows;
+}
+
+async function getTopPlayers(client) {
+  const query = `SELECT * FROM players WHERE rating > 80;`;
+  const result = await client.query(query);
+  return result.rows;
+}
+
+async function getCheapPlayers(client) {
+  const query = `SELECT * FROM players WHERE price BETWEEN 1 AND 3;`;
+  const result = await client.query(query);
+  return result.rows;
+}
+
+async function getBestPlayer(client) {
+  const query = `SELECT MAX(rating) FROM players;`;
+  const result = await client.query(query);
+  return result.rows;
+}
+
+async function getWorstPlayer(client) {
+  const query = `SELECT MIN(rating) FROM players;`;
+  const result = await client.query(query);
+  return result.rows;
+}
+
+async function getGKsAndDEFs(client) {
+  const query = `SELECT * FROM players WHERE position_id IN (1, 2);`;
+  const result = await client.query(query);
+  return result.rows;
+}
+
+async function getMIDsAndFWDs(client) {
+  const query = `SELECT * FROM players WHERE position_id NOT IN (1, 2);`;
+  const result = await client.query(query);
+  return result.rows;
+}
+
+async function getPlayersWithoutCOPNextRound(client) {
+  const query = `SELECT * FROM players WHERE chance_of_playing_next_round IS NULL;`;
+  const result = await client.query(query);
+  return result.rows;
+}
+
+async function getPlayersWithCOPNextRound(client) {
+  const query = `SELECT * FROM players WHERE chance_of_playing_next_round IS NOT NULL;`;
+  const result = await client.query(query);
+  return result.rows;
+}
+
+async function getAverageRatingOfPlayers(client) {
+  const query = `SELECT AVG(rating) FROM players;`;
+  const result = await client.query(query);
+  return result.rows;
+}
+
+async function getPlayerCharacteristics(client) {
+  const query = `SELECT
+  name,
+  CASE
+      WHEN goals_scored >= 3 AND assists >= 2 THEN 'Гарний гравець'
+      WHEN goals_scored >= 2 AND assists >= 1 THEN 'Посередній гравець'
+      ELSE 'Поганий гравець'
+  END AS rating_category
+FROM players;`;
+  const result = await client.query(query);
+  return result.rows;
+}
+
+// TODO: RIGHT JOIN;
+async function get(client) {
+  const query = ``;
+  const result = await client.query(query);
+  return result.rows;
+}
+
+async function getPricesOfAllUserTeams(client) {
+  const query = `SELECT user_teams.user_id,
+  user_teams.user_team_id,
+  SUM(players.price) AS total_team_value
+FROM user_teams
+JOIN team_players ON user_teams.user_team_id = team_players.user_team_id
+JOIN players ON team_players.player_id = players.player_id
+GROUP BY user_teams.user_id, user_teams.user_team_id;`;
+  const result = await client.query(query);
+  return result.rows;
+}
+
+// TODO: UNION;
+async function getOfficialUserTeamsComparison(client) {
+  const query = `SELECT
+  'User team' AS team_name,
+  SUM(p.goals_scored) AS total_goals
+FROM
+  team_players tp
+JOIN
+  players p ON tp.player_id = p.player_id
+WHERE
+  tp.user_team_id = 1
+GROUP BY
+  team_name
+
+UNION
+
+SELECT
+  ot.official_team_name AS team_name,
+  SUM(p.goals_scored) AS total_goals
+FROM
+  official_teams ot
+JOIN
+  players p ON ot.official_team_id = p.official_team_id
+GROUP BY
+  ot.official_team_name;`;
+  const result = await client.query(query);
+  return result.rows;
+}
+
+async function getPricesOfAllOfficialTeams(client) {
+  const query = `SELECT 
+  official_teams.official_team_name AS team_name,
+  SUM(players.price) AS total_team_value
+FROM 
+  official_teams
+JOIN 
+  players ON official_teams.official_team_id = players.official_team_id
+GROUP BY 
+  official_teams.official_team_name`;
+  const result = await client.query(query);
+  return result.rows;
+}
+
+async function getUserTeamPlayersICT(client) {
+  const query = `SELECT players.name, players.ict_index
+  FROM players
+  INTERSECT
+  SELECT players.name, players.ict_index
+  FROM players
+  JOIN team_players ON players.player_id = team_players.player_id;`;
+  const result = await client.query(query);
+  return result.rows;
+}
+
+async function getTopPlayersFromUserTeams(client) {
+  const query = `SELECT t_p_id, user_team_id, player_id, position_number
+  FROM team_players
+  EXCEPT
+  SELECT t_p_id, user_team_id, tp.player_id, position_number
+  FROM team_players tp
+  JOIN players p ON tp.player_id = p.player_id
+  WHERE p.rating < 80;`;
+  const result = await client.query(query);
+  return result.rows;
+}
+
+async function getNonFieldPlayers(client) {
+  const query = `SELECT *
+  FROM players
+  JOIN player_positions ON players.position_id = player_positions.position_id
+  WHERE player_positions.position_name_short LIKE 'G%';`;
+  const result = await client.query(query);
+  return result.rows;
+}
+
+async function getFieldPlayers(client) {
+  const query = `SELECT *
+ FROM players
+ JOIN player_positions ON players.position_id = player_positions.position_id
+ WHERE player_positions.position_name_short NOT LIKE 'G%';`;
+  const result = await client.query(query);
+  return result.rows;
+}
+
+async function getUserInfoAndBudget(client) {
+  const query = `SELECT users.username, users.email, user_teams.budget
+  FROM users
+  JOIN user_teams ON users.user_id = user_teams.user_id;`;
+  const result = await client.query(query);
+  return result.rows;
+}
+
+async function getPlayerCountForPosition(client) {
+  const query = `SELECT position_id, COUNT(*) AS player_count
+  FROM players
+  GROUP BY position_id
+  ORDER BY player_count DESC;`;
+  const result = await client.query(query);
+  return result.rows;
+}
+
+async function getPlayersAndTheirTeams(client) {
+  const query = `SELECT players.name, official_teams.official_team_name
+  FROM "players"
+  INNER JOIN official_teams ON players.official_team_id = official_teams.official_team_id
+  ORDER BY official_teams.official_team_name;`;
+  const result = await client.query(query);
+  return result.rows;
+}
+
+async function getUserTotalCoefficient(client) {
+  const query = `SELECT users.username, user_teams.total_coefficient
+  FROM "users"
+  LEFT JOIN user_teams ON users.user_id = user_teams.user_id;`;
+  const result = await client.query(query);
+  return result.rows;
+}
+
+async function getAverageRatingForPlayerPosition(client) {
+  const query = `SELECT position_id, AVG(rating) AS avg_rating
+  FROM players
+  GROUP BY position_id
+  HAVING AVG(rating) > 7;`;
+  const result = await client.query(query);
+  return result.rows;
+}
+
 async function getOfficialTeams(client) {
   const query = `SELECT * FROM "official_teams"`;
   const result = await client.query(query);
@@ -246,6 +465,28 @@ async function upsertPlayerInfo(client, player) {
 }
 
 module.exports = {
+  getOfficialUserTeamsComparison,
+  getTopPlayersFromUserTeams,
+  getUserTeamPlayersICT,
+  getPricesOfAllUserTeams,
+  getNonFieldPlayers,
+  getFieldPlayers,
+  getPlayerCharacteristics,
+  getBestPlayer,
+  getWorstPlayer,
+  getAverageRatingOfPlayers,
+  getPlayersWithoutCOPNextRound,
+  getPlayersWithCOPNextRound,
+  getMIDsAndFWDs,
+  getGKsAndDEFs,
+  getCheapPlayers,
+  getTopPlayers,
+  getUserInfoAndBudget,
+  getPlayerCountForPosition,
+  getAverageRatingForPlayerPosition,
+  getSortedPlayers,
+  getUserTotalCoefficient,
+  getPlayersAndTheirTeams,
   getUserTeam,
   getUserTeamSchemaByUserId,
   addUser,
