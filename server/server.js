@@ -43,7 +43,7 @@ const fastify = require("fastify")({
 });
 
 const PORT = 8000;
-const REFRESH_MS = 10000 * 60 * 60;
+const REFRESH_MS = 10000 * 1 * 1;
 const URL_API_FANTASY_FOOTBALL =
   "https://fantasy.premierleague.com/api/bootstrap-static/";
 
